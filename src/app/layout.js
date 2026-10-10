@@ -1,15 +1,17 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import {  Noto_Serif_Bengali } from "next/font/google";
 import "./globals.css";
+import Nevber from "./component/Nevber";
+import NebLink from "./component/NebLink";
+import Marpuee from "./component/Marpuee";
+import { ToastContainer } from "react-toastify";
+import Footer from "./component/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const hindSiliguri = Noto_Serif_Bengali({
+  weight: ["300", "400", "500", "600", "700"], // 'weight' অবশ্যই উল্লেখ করতে হবে
+  subsets: ["bengali", "latin"],
+  variable: "--font-hind-siliguri",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata = {
   title: "Create Next App",
@@ -20,9 +22,23 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      data-theme= 'light'
+      className={`${hindSiliguri.className} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-screen flex flex-col bg-green-50">
+         <Nevber></Nevber>
+          <NebLink></NebLink>
+          <Marpuee></Marpuee>
+          <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          theme="light"
+        />
+        <main className=" flex-1 w-full max-w-7xl mx-auto items-center justify-between pt-5 px-4">
+          {children}
+        </main>
+        <Footer></Footer>
+      </body>
     </html>
   );
 }
