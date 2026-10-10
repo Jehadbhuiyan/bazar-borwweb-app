@@ -37,12 +37,12 @@ const SignUp = () => {
       provider: "google",
     });
   };
-  
-const githubsigninhendle = async () => {
+
+  const githubsigninhendle = async () => {
     const data = await authClient.signIn.social({
-        provider: "github"
-    })
-}
+      provider: "github",
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-green-50/50 px-4 py-8">
@@ -69,8 +69,13 @@ const githubsigninhendle = async () => {
               type="submit"
               className="flex-1 bg-[#05893e] hover:bg-[#046c31] text-white font-medium"
             >
-             {loading ? <><span className="loading loading-spinner loading-md"></span>
-</> : 'লগিন করুন'}
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-md"></span>
+                </>
+              ) : (
+                "লগিন করুন"
+              )}
             </Button>
           </div>
 
@@ -94,7 +99,7 @@ const githubsigninhendle = async () => {
               google দিয়ে চালিয়ে যান
             </button>
             <button
-            onClick={githubsigninhendle}
+              onClick={githubsigninhendle}
               type="button"
               className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors px-3 py-2.5 text-[13px] sm:text-sm font-medium text-gray-800"
             >

@@ -1,5 +1,5 @@
-import { Noto_Serif_Bengali } from "next/font/google";
 import { Suspense } from "react";
+import { Noto_Serif_Bengali } from "next/font/google";
 import "./globals.css";
 import Nevber from "./component/Nevber";
 import NebLink from "./component/NebLink";
@@ -15,7 +15,7 @@ const hindSiliguri = Noto_Serif_Bengali({
 
 export const metadata = {
   title: "বাজার দর",
-  description: "বাংলাদেশের নিত্যপ্রয়োজনীয় পণ্যের বাজারদর জানুন।",
+  description: "আজকের বাজারের দাম এক নজরে",
 };
 
 export default function RootLayout({ children }) {
@@ -26,24 +26,32 @@ export default function RootLayout({ children }) {
       className={`${hindSiliguri.className} h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col bg-green-50">
-        <Nevber />
-
         <Suspense
-          fallback={<div className="h-12 w-full" />}
+          fallback={
+            <div className="w-full max-w-7xl mx-auto pt-3 sm:pt-5 px-3 sm:px-4 h-14" />
+          }
         >
+          <Nevber />
+        </Suspense>
+
+        <Suspense fallback={<div className="h-12" />}>
           <NebLink />
         </Suspense>
 
-        <Marpuee />
+        <Suspense fallback={<div className="h-10 bg-white" />}>
+          <Marpuee />
+        </Suspense>
 
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          theme="light"
-        />
+        <ToastContainer position="top-center" autoClose={3000} theme="light" />
 
         <main className="flex-1 w-full max-w-7xl mx-auto pt-5 px-4">
-          {children}
+          <Suspense
+            fallback={
+              <p className="py-10 text-center text-gray-400">লোড হচ্ছে...</p>
+            }
+          >
+            {children}
+          </Suspense>
         </main>
 
         <Footer />

@@ -8,10 +8,8 @@ import { toast } from "react-toastify";
 
 const Nevber = () => {
   const [today, setToday] = useState("");
+  const { data: session, isPending } = authClient.useSession();
 
-  const { data: session } = authClient.useSession();
-
-  // বাংলাদেশের তারিখ
   useEffect(() => {
     const date = new Date().toLocaleDateString("bn-BD", {
       timeZone: "Asia/Dhaka",
@@ -19,7 +17,6 @@ const Nevber = () => {
       month: "long",
       day: "numeric",
     });
-
     setToday(date);
   }, []);
 
@@ -33,7 +30,10 @@ const Nevber = () => {
         return;
       }
 
-      toast.success("লগআউট হয়েছে");
+      toast.success("লগআউট হয়েছে");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 500);
     } catch (error) {
       toast.error("লগআউট করার সময় সমস্যা হয়েছে");
     }
@@ -57,7 +57,6 @@ const Nevber = () => {
           <h1 className="text-base sm:text-xl font-bold text-gray-900">
             বাজার দর
           </h1>
-
           <p
             suppressHydrationWarning
             className="text-[10px] sm:text-xs text-gray-500 truncate"
@@ -67,8 +66,13 @@ const Nevber = () => {
         </div>
       </div>
 
-      {/* Login অথবা User Profile */}
-      {session?.user ? (
+      {/* Loading / User Profile / Sign in-up */}
+      {isPending ? (
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="skeleton w-9 h-9 sm:w-10 sm:h-10 rounded-full" />
+          <div className="skeleton h-4 w-16 sm:w-24" />
+        </div>
+      ) : session?.user ? (
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {/* Avatar */}
           <div className="avatar shrink-0">
@@ -101,32 +105,25 @@ const Nevber = () => {
               tabIndex={-1}
               className="dropdown-content menu bg-base-100 rounded-box z-50 w-56 sm:w-60 p-2 shadow-md border border-gray-100"
             >
-              {/* User Information */}
               <li className="pointer-events-none">
                 <div className="flex flex-col items-start gap-1 min-w-0">
                   <span className="font-bold text-gray-900 truncate w-full">
                     {session.user.name}
                   </span>
-
                   <span className="text-xs text-gray-500 truncate w-full">
                     {session.user.email}
                   </span>
                 </div>
               </li>
 
-              {/* Profile Update */}
               <li>
                 <Link href="/profilePage">
                   <span>প্রোফাইল আপডেট</span>
                 </Link>
               </li>
 
-              {/* Logout */}
               <li>
-                <button
-                  className="text-red-500"
-                  onClick={logoutHandle}
-                >
+                <button className="text-red-500" onClick={logoutHandle}>
                   ➥ সাইন আউট
                 </button>
               </li>
@@ -134,12 +131,9 @@ const Nevber = () => {
           </div>
         </div>
       ) : (
-        /* Sign In / Sign Up */
         <div className="flex gap-1.5 sm:gap-2 shrink-0">
           <Link href="/signin">
-            <button className="btn btn-sm sm:btn-md">
-              Sign in
-            </button>
+            <button className="btn btn-sm sm:btn-md">Sign in</button>
           </Link>
 
           <Link href="/signup">

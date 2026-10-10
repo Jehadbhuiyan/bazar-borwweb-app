@@ -2,49 +2,63 @@
 import Link from "next/link";
 import { authClient, signUp } from "@/lib/auth-client";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   NameField,
   PasswordField,
   WebsiteField,
+  EmailField,
 } from "@/app/component/commonfile/TextField";
-import { EmailField } from "@/app/component/commonfile/TextField";
 import { Button, Form } from "@heroui/react";
 
 const SignUp = () => {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    const { data: resData, error } = await signUp.email({
-      name: data.name,
-      email: data.email,
-      image: data.url,
-      password: data.password,
-      callbackURL: "/",
-    });
-    if (error) {
-      // এখানে আসল ত্রুটি দেখতে পাবেন (যেমন: "Invalid email or password" অথবা "Email not verified")
-      toast.error(error.message || "রেজিস্টেশন করা সম্ভব হচ্ছে না!");
-      return;
-    }
 
-    toast.success("রেজিস্টেশন সফল হয়েছে");
+    try {
+      const formData = new FormData(e.currentTarget);
+      const data = Object.fromEntries(formData.entries());
+
+      const { error } = await signUp.email({
+        name: data.name,
+        email: data.email,
+        image: data.url || undefined,
+        password: data.password,
+      });
+
+      if (error) {
+        toast.error(error.message || "রেজিস্ট্রেশন করা সম্ভব হচ্ছে না!");
+        setLoading(false);
+        return;
+      }
+
+      toast.success("রেজিস্ট্রেশন সফল হয়েছে!");
+
+      // full reload, tai Nevber notun session niye render hoy
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 800);
+    } catch (err) {
+      console.error(err);
+      toast.error("কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      setLoading(false);
+    }
   };
 
   const googlesigninhendle = async () => {
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: "google",
+      callbackURL: "/",
     });
   };
 
   const githubsigninhendle = async () => {
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: "github",
+      callbackURL: "/",
     });
   };
 
@@ -64,7 +78,6 @@ const SignUp = () => {
       <div className="w-full max-w-md bg-white rounded-2xl sm:rounded-3xl border border-green-100 shadow-sm p-5 sm:p-8">
         <Form className="flex w-full flex-col gap-4" onSubmit={onSubmit}>
           <NameField />
-
           <EmailField />
           <WebsiteField />
           <PasswordField />
@@ -77,9 +90,7 @@ const SignUp = () => {
               className="flex-1 bg-[#05893e] hover:bg-[#046c31] text-white font-medium"
             >
               {loading ? (
-                <>
-                  <span className="loading loading-spinner loading-md"></span>
-                </>
+                <span className="loading loading-spinner loading-md"></span>
               ) : (
                 "রেজিস্টেশন করুন"
               )}
