@@ -10,43 +10,53 @@ import {
   EmailField,
 } from "@/app/component/commonfile/TextField";
 import { Button, Form } from "@heroui/react";
+import { passwordValidate } from "@/app/component/commonfile/PasswordValidate";
 
 const SignUp = () => {
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const onSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const formData = new FormData(e.currentTarget);
-      const data = Object.fromEntries(formData.entries());
+  try {
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
 
-      const { error } = await signUp.email({
-        name: data.name,
-        email: data.email,
-        image: data.url || undefined,
-        password: data.password,
-      });
+    // Password validation
+    const passwordError = passwordValidate(data.password);
 
-      if (error) {
-        toast.error(error.message || "রেজিস্ট্রেশন করা সম্ভব হচ্ছে না!");
-        setLoading(false);
-        return;
-      }
-
-      toast.success("রেজিস্ট্রেশন সফল হয়েছে!");
-
-      // full reload, tai Nevber notun session niye render hoy
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 800);
-    } catch (err) {
-      console.error(err);
-      toast.error("কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    if (passwordError) {
+      toast.error(passwordError);
       setLoading(false);
+      return;
     }
-  };
+
+    const { error } = await signUp.email({
+      name: data.name,
+      email: data.email,
+      image: data.url || undefined,
+      password: data.password,
+    });
+
+    if (error) {
+      toast.error(error.message || "রেজিস্ট্রেশন করা সম্ভব হচ্ছে না!");
+      setLoading(false);
+      return;
+    }
+
+    toast.success("রেজিস্ট্রেশন সফল হয়েছে!");
+
+    // Full reload
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 800);
+  } catch (err) {
+    console.error(err);
+    toast.error("কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    setLoading(false);
+  }
+};
 
   const googlesigninhendle = async () => {
     await authClient.signIn.social({

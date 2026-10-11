@@ -45,7 +45,7 @@ const Nevber = () => {
       <div className="flex gap-2 sm:gap-3 items-center min-w-0">
         <div className="bg-[#05893e] p-1 rounded-sm shrink-0">
           <Image
-            className="p-1 m-0.5 sm:m-1 w-4 h-4 sm:w-5 sm:h-5"
+            className="p-1 m-0.5 sm:m-1 w-4 h-4 sm:w-5 sm:h-5 brightness-0 invert"
             src="/logo-icon.png"
             alt="বাজার দর লোগো"
             height={20}
@@ -76,12 +76,18 @@ const Nevber = () => {
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {/* Avatar */}
           <div className="avatar shrink-0">
-            <div className="mask mask-squircle w-9 h-9 sm:w-10 sm:h-10 relative overflow-hidden">
-              <img
-                src={session.user.image || "/default-avatar.png"}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+            <div className="mask mask-squircle w-9 h-9 sm:w-10 sm:h-10 relative overflow-hidden bg-green-100 flex items-center justify-center">
+              {session?.user?.image ? (
+                <img
+                  src={session.user.image}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-green-700 font-bold text-lg uppercase">
+                  {session?.user?.name?.trim()?.charAt(0) || "U"}
+                </span>
+              )}
             </div>
           </div>
 

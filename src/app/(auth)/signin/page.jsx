@@ -9,28 +9,41 @@ import {
   EmailField,
   PasswordField,
 } from "@/app/component/commonfile/TextField";
+import { passwordValidate } from "@/app/component/commonfile/PasswordValidate";
 
 const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const onSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    const { data: resdata, error } = await authClient.signIn.email({
+
+    const { error } = await authClient.signIn.email({
       email: data.email,
       password: data.password,
-      callbackURL: "/",
     });
+
     if (error) {
-      // এখানে আসল ত্রুটি দেখতে পাবেন (যেমন: "Invalid email or password" অথবা "Email not verified")
-      toast.error(error.message || "লগইন করা সম্ভব হচ্ছে না!");
+      toast.error("ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে!");
+      setLoading(false);
       return;
     }
 
-    toast.success("লগিন সফল হয়েছে");
-  };
+    toast.success("সফলভাবে লগইন হয়েছে!");
+
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 800);
+  } catch (err) {
+    console.error(err);
+    toast.error("লগইন করা সম্ভব হয়নি। আবার চেষ্টা করুন!");
+    setLoading(false);
+  }
+};
 
   const googlesigninhendle = async () => {
     const data = await authClient.signIn.social({

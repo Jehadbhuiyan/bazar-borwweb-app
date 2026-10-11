@@ -1,7 +1,9 @@
 "use client";
 
-import { FieldError, Input, InputGroup, Label, TextField } from "@heroui/react";
+import { Button, FieldError, Input, InputGroup, Label, TextField } from "@heroui/react";
 import { passwordValidate } from "./PasswordValidate";
+import { useState } from "react";
+import {Eye, EyeSlash} from "@gravity-ui/icons";
 
 export const NameField = ({
   name = "name",
@@ -65,35 +67,58 @@ export const EmailField = ({
   );
 };
 
-
 export const PasswordField = ({
   isRequired = true,
   name = "password",
   placeholder = "পাসওয়ার্ড লিখুন",
-  label = 'পাসওয়ার্ড'
-}) => (
-  <TextField
-    isRequired={isRequired}
-    minLength={8}
-    name={name}
-    type="password"
-    className="w-full"
-    validate={passwordValidate}
-  >
-    <Label>{label}</Label>
+  label = "পাসওয়ার্ড",
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [password, setPassword] = useState("");
 
-    <Input
-      type="password"
-      placeholder={placeholder}
-      className="w-full"
-    />
+  const error = passwordValidate(password);
 
-    <FieldError />
-  </TextField>
-);
+  return (
+    <div className="w-full max-w-70">
+      <Label>{label}</Label>
 
+      <InputGroup>
+        <InputGroup.Input
+          className="w-full"
+          type={isVisible ? "text" : "password"}
+          name={name}
+          placeholder={placeholder}
+          value={password}
+          isRequired={isRequired}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
+        <InputGroup.Suffix className="pe-0">
+          <Button
+            isIconOnly
+            type="button"
+            aria-label={isVisible ? "Hide password" : "Show password"}
+            size="sm"
+            variant="ghost"
+            onPress={() => setIsVisible((prev) => !prev)}
+          >
+            {isVisible ? (
+              <Eye className="size-4" />
+            ) : (
+              <EyeSlash className="size-4" />
+            )}
+          </Button>
+        </InputGroup.Suffix>
+      </InputGroup>
 
+      {password && error && (
+        <p className="mt-1 text-sm text-red-500">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+};
 export const WebsiteField = ({
   name = "website",
   label = "Website",
